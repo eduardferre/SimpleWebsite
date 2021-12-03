@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>API Github</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script>
+    $(document).ready(function(){
+      $(".table").hide();
+
+      $('#button1').click(function()
+      {
+          $('#body').empty();
+          $.ajax(
+            {
+              type: 'GET',
+              url: 'https://api.github.com/users/'+$("#userName").val()+'/repos',
+              data: { get_param: 'value' },
+              dataType: 'json',
+              success: function (json)
+              {
+                  var count = 0;
+                  $.each(json, function(index, element)
+                  {
+                      $('#body').append('<tr><td>'+element.name+'</td><td>'+element.description+'</td><td>'+element.stargazers_count+'</td></tr>');
+                      count++;
+                  });
+
+                  if(count > 0)
+                  {
+                      $("#text1").text("Repositories of " +$("#userName").val());
+                      $("#subtext1").text("This is what I found in GitHub:");
+                      $(".table").show(1000);
+                  }
+                  else
+                  {
+                      $("#text1").text("Not Found");
+                      $("#subtext1").text("Try it again");
+                      $(".table").hide();
+                  }
+              },
+
+              error : function(xhr, status)
+              {
+                  $("#text1").text("Error, the input user does not exist on GitHub or it is unavailable to find it on the database");
+                  $("#subtext1").text("Try to rewrite the user or search another user :)");
+                  $(".table").hide();
+              }
+
+            });
+        });
+  });
+  </script>
+
+
+<body>
+
+<div class="container-fluid">
+    <h1>GitHub API</h1>
+    <p>Implementation of a simple website with Bootstrap and JQuery</p>
+    <label>Enter github username:</label>
+    <div class="row">
+        <div class="col-sm-8">
+          <input type="text" class="form-control" id="userName">
+        </div>
+        <div class="col-sm-4">
+          <button type="button" class="btn btn-info" id="button1">Show</button>
+        </div>
+    </div>
+    <h2 id="text1"> </h2>
+    <p id="subtext1"> </p>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Number of followers</th>
+        </tr>
+        </thead>
+        <tbody id="body">
+        <!--Table inserted by the function -->
+        </tbody>
+    </table>
+
+</div>
+
+</body>
+</html>
